@@ -5,6 +5,7 @@ import br.com.alura.school.user.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
@@ -23,7 +24,7 @@ public class Enrollment {
     @JoinColumn(name="course_id")
     private Course course;
 
-    @NotBlank
+    @NotNull
     private LocalDate date;
 
     public Enrollment() {}

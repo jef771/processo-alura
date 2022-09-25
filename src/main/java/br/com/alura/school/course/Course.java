@@ -41,6 +41,10 @@ public class Course {
         this.description = description;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getCode() {
         return code;
     }
