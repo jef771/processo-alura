@@ -1,9 +1,13 @@
 package br.com.alura.school.user;
 
+import br.com.alura.school.enrollment.Enrollment;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import java.util.Set;
 
 import static br.com.alura.school.user.UserRole.STUDENT;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -28,6 +32,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole role = STUDENT;
 
+    @OneToMany(mappedBy = "user")
+    private Set<Enrollment> enrollments;
+
     @Deprecated
     public User() {}
 
@@ -50,5 +57,13 @@ public class User {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    public Set<Enrollment> getEnrollments() {
+        return enrollments;
+    }
+
+    public void setEnrollments(Set<Enrollment> enrollments) {
+        this.enrollments = enrollments;
     }
 }

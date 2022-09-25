@@ -1,11 +1,12 @@
 package br.com.alura.school.course;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import br.com.alura.school.enrollment.Enrollment;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import java.util.Set;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -28,6 +29,9 @@ public class Course {
 
     private String description;
 
+    @OneToMany(mappedBy = "course")
+    private Set<Enrollment> enrollments;
+
     @Deprecated
     protected Course() { }
 
@@ -49,6 +53,11 @@ public class Course {
         return description;
     }
 
+    public Set<Enrollment> getEnrollments() {
+        return enrollments;
+    }
 
-
+    public void setEnrollments(Set<Enrollment> enrollments) {
+        this.enrollments = enrollments;
+    }
 }
