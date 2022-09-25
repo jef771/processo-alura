@@ -6,7 +6,9 @@ import br.com.alura.school.user.NewUserRequest;
 import br.com.alura.school.user.User;
 import br.com.alura.school.user.UserRepository;
 import br.com.alura.school.user.UserRole;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -36,12 +38,15 @@ class LectureControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Test
-    void should_add_new_lecture() throws Exception {
+    @BeforeEach
+    void init() {
         courseRepository.save(new Course("java-1", "Java OO", "Java and Object Orientation: Encapsulation, Inheritance and Polymorphism."));
         User newUser = userRepository.save(new User("ana", "ana@email.com"));
         newUser.setRole(UserRole.INSTRUCTOR);
         userRepository.save(newUser);
+    }
+    @Test
+    void should_add_new_lecture() throws Exception {
         NewLectureRequest newLectureRequest = new NewLectureRequest("flutter-cores-dinamicas",
                 "Flutter: Configurando cores dinâmicas",
                 "ana");
@@ -51,5 +56,17 @@ class LectureControllerTest {
                 .content(jsonMapper.writeValueAsString(newLectureRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/courses/java-1/sections/flutter-cores-dinamicas"));
+    }
+
+    @Test
+    void bad_request_when_code_missing() throws Exception {
+        NewLectureRequest newLectureRequest = new NewLectureRequest("",
+                "Flutter: Configurando cores dinâmicas",
+                "ana");
+
+        mockMvc.perform(post("/courses/java-1/sections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonMapper.writeValueAsString(newLectureRequest)))
+                .andExpect(status().isBadRequest());
     }
 }
