@@ -28,4 +28,24 @@ public class Video {
             nullable = false
     )
     private Lecture lecture;
+
+    public Video(String video) {
+        this.video = video;
+    }
+
+    public String getVideo() {
+        return video;
+    }
+
+    public void setVideo(String video) {
+        this.video = video;
+    }
+
+    public Lecture getLecture() {
+        return lecture;
+    }
+
+    public void setLecture(Lecture lecture) {
+        this.lecture = lecture;
+    }
 }

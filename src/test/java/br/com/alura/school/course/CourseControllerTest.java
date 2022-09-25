@@ -66,5 +66,4 @@ class CourseControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/courses/java-2"));
     }
-
 }
