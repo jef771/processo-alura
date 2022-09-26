@@ -6,7 +6,6 @@ import javax.validation.constraints.NotBlank;
 
 public class NewEnrollmentRequest {
 
-    @NotBlank
     @JsonProperty
     private String username;
 

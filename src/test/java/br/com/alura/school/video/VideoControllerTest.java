@@ -45,23 +45,22 @@ class VideoControllerTest {
 
     private Section section;
 
-    @BeforeEach
-    void init() {
-        Course newCourse = courseRepository.save(new Course("java-1", "Java OO", "Java and Object Orientation: Encapsulation, Inheritance and Polymorphism."));
-        User newUser = new User("ana", "ana@email.com");
-        newUser.setRole(UserRole.INSTRUCTOR);
-        userRepository.save(newUser);
-        Section newSection = new Section("flutter-cores-dinamicas", "Flutter: Configurando cores dinâmicas");
-        newSection.setCourse(newCourse);
-        newSection.setAuthor(newUser);
-        section = sectionRepository.save(newSection);
-    }
 
     @Test
     void should_add_new_video() throws Exception {
-        NewVideoRequest newVideoRequest = new NewVideoRequest("https://www.youtube.com/watch?v=gI4-vj0WpKM");
+        Course course = courseRepository.save(new Course("git-2", "Git 01", "Git basics."));
+        User newUser2 = userRepository.save(new User("john", "john@email.com"));
+        newUser2.setRole(UserRole.INSTRUCTOR);
+        User user = userRepository.save(newUser2);
+        Section section = new Section("git-commit", "Git: Commit Command");
+        section.setAuthor(user);
+        section.setCourse(course);
+        sectionRepository.save(section);
 
-        mockMvc.perform(post("/courses/java-1/sections/flutter-cores-dinamicas")
+
+        NewVideoRequest newVideoRequest = new NewVideoRequest("https://www.youtube.com/watch?v=gI4-v");
+
+        mockMvc.perform(post("/courses/git-2/sections/git-commit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(newVideoRequest)))
                 .andExpect(status().isCreated())
@@ -81,16 +80,24 @@ class VideoControllerTest {
 
     @Test
     void conflict_when_video_in_lecture() throws Exception {
-        NewVideoRequest newVideoRequest = new NewVideoRequest("https://www.youtube.com/watch?v=gI4-vj0WpKM");
-        Optional<Section> section1 = sectionRepository.findSectionByCode("flutter-cores-dinamicas");
-        Video video = new Video("https://www.youtube.com/watch?v=gI4-vj0WpKM");
-        video.setSection(section);
+        Course course = courseRepository.save(new Course("git-3", "Git 02", "Git basics."));
+        User newUser2 = userRepository.save(new User("doe", "doe@email.com"));
+        newUser2.setRole(UserRole.INSTRUCTOR);
+        User user = userRepository.save(newUser2);
+        Section section = new Section("git-add", "Git: Add Command");
+        section.setAuthor(user);
+        section.setCourse(course);
+        Section newSection = sectionRepository.save(section);
+        Video video = new Video("https://www.youtube.com/watch?v=gI4-");
+        video.setSection(newSection);
         videoRepository.save(video);
 
-        mockMvc.perform(post("/courses/java-1/sections/flutter-cores-dinamicas")
+        NewVideoRequest newVideoRequest = new NewVideoRequest("https://www.youtube.com/watch?v=gI4-");
+
+        mockMvc.perform(post("/courses/git-3/sections/git-add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(newVideoRequest)))
-                .andExpect(status().reason("Video https://www.youtube.com/watch?v=gI4-vj0WpKM already in lecture Flutter: Configurando cores dinâmicas"))
+                .andExpect(status().reason("Video https://www.youtube.com/watch?v=gI4- already in section Git: Add Command"))
                 .andExpect(status().isConflict());
     }
 }

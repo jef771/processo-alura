@@ -12,7 +12,6 @@ public class NewSectionRequest {
     @JsonProperty
     private final String title;
 
-    @NotBlank
     @JsonProperty
     private final String authorUsername;
 

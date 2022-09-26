@@ -23,4 +23,20 @@ public class SectionByVideosReportResponse {
         this.authorName = report.getAuthorName();
         this.totalVideos = report.getTotalVideos();
     }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public String getSectionTitle() {
+        return sectionTitle;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public Long getTotalVideos() {
+        return totalVideos;
+    }
 }
