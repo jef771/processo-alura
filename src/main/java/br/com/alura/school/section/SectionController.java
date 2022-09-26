@@ -15,61 +15,25 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static java.lang.String.format;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 public class SectionController {
 
-    private final SectionRepository sectionRepository;
-    private final CourseRepository courseRepository;
-    private final UserRepository userRepository;
+    private final SectionService service;
 
 
-    public SectionController(SectionRepository sectionRepository, CourseRepository courseRepository, UserRepository userRepository) {
-        this.sectionRepository = sectionRepository;
-        this.courseRepository = courseRepository;
-        this.userRepository = userRepository;
+    public SectionController(SectionService service) {
+        this.service = service;
     }
 
     @PostMapping("/courses/{code}/sections")
     ResponseEntity<Void> newSection(@PathVariable("code") String code,
                                     @RequestBody @Valid NewSectionRequest newSectionRequest) {
-        if(StringUtils.isBlank(newSectionRequest.getCode()) ||
-                StringUtils.isBlank(newSectionRequest.getTitle()) ||
-                StringUtils.isBlank(newSectionRequest.getAuthorUsername())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, format("Please inform code, tittle, and author username"));
-        }
 
-        if(StringUtils.length(newSectionRequest.getTitle()) < 5) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, format("Title must have more than 5"));
-        }
-        if(sectionRepository.existsSectionByCode(newSectionRequest.getCode())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, format("Code %s already in use", newSectionRequest.getCode()));
-        }
-
-        Optional<Course> course = courseRepository.findByCode(code);
-        Optional<User> user = userRepository.findByUsername(newSectionRequest.getAuthorUsername());
-        if(course.isEmpty()) {
-            throw new ResponseStatusException(NOT_FOUND, format("Course with code %s not found", code));
-        } else if(user.isEmpty()) {
-            throw new ResponseStatusException(NOT_FOUND, format("User with username %s not found",
-                    newSectionRequest.getAuthorUsername()));
-        }
-        User author = user.get();
-        if(!UserRole.INSTRUCTOR.equals(author.getRole())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, format("User must be an INSTRUCTOR"));
-        }
-
-        Section section = newSectionRequest.toEntity();
-        section.setCourse(course.get());
-        section.setAuthor(author);
-
-        Section newSection = sectionRepository.save(section);
+        Section newSection = service.newSection(code, newSectionRequest);
         URI location = URI.create(format("/courses/%s/sections/%s", code, newSection.getCode()));
 
         return ResponseEntity.created(location).build();
@@ -77,12 +41,7 @@ public class SectionController {
 
     @GetMapping("/sectionByVideosReport")
     ResponseEntity<List<SectionByVideosReportResponse>> report() {
-        List<SectionByVideosReport> report = sectionRepository.report();
-        List<SectionByVideosReportResponse> reportResponse = new ArrayList<>();
-
-        report.forEach(r -> {
-            reportResponse.add(new SectionByVideosReportResponse(r));
-        });
+        List<SectionByVideosReportResponse> reportResponse = service.report();
 
         return ResponseEntity.ok(reportResponse);
     }
