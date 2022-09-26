@@ -8,14 +8,9 @@ import javax.validation.constraints.Size;
 
 public class NewLectureRequest {
 
-    @Unique(entity = Lecture.class, field = "code")
-    @NotBlank
     @JsonProperty
     private final String code;
 
-    @Unique(entity = Lecture.class, field = "title")
-    @Size(min=5)
-    @NotBlank
     @JsonProperty
     private final String title;
 

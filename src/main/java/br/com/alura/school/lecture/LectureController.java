@@ -2,20 +2,19 @@ package br.com.alura.school.lecture;
 
 import br.com.alura.school.course.Course;
 import br.com.alura.school.course.CourseRepository;
+import br.com.alura.school.reports.VideoByLectureReport;
 import br.com.alura.school.user.User;
 import br.com.alura.school.user.UserRepository;
 import br.com.alura.school.user.UserRole;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.format;
@@ -43,6 +42,10 @@ public class LectureController {
                 StringUtils.isBlank(newLectureRequest.getAuthorUsername())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, format("Please inform code, tittle, and author username"));
         }
+
+        if(StringUtils.length(newLectureRequest.getTitle()) < 5) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, format("Title must have more than 5"));
+        }
         if(lectureRepository.existsLectureByCode(newLectureRequest.getCode())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, format("Code %s already in use", newLectureRequest.getCode()));
         }
@@ -68,5 +71,11 @@ public class LectureController {
         URI location = URI.create(format("/courses/%s/sections/%s", code, newLecture.getCode()));
 
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping("/sectionByVideosReport")
+    ResponseEntity<VideoByLectureReport> report() {
+        List<VideoByLectureReport> report = lectureRepository.report();
+        return null;
     }
 }
