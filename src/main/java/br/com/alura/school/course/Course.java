@@ -1,6 +1,7 @@
 package br.com.alura.school.course;
 
 import br.com.alura.school.enrollment.Enrollment;
+import br.com.alura.school.section.Section;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -29,7 +30,7 @@ public class Course {
 
     private String description;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private Set<Enrollment> enrollments;
 
     @Deprecated

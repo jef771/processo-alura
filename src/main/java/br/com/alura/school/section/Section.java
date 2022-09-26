@@ -6,9 +6,6 @@ import javax.validation.constraints.Size;
 
 import br.com.alura.school.course.Course;
 import br.com.alura.school.user.User;
-import br.com.alura.school.video.Video;
-
-import java.util.Set;
 
 @Entity
 public class Section {

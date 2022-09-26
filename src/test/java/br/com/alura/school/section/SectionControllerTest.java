@@ -19,11 +19,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -31,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Rollback
 class SectionControllerTest {
 
     private final ObjectMapper jsonMapper = new ObjectMapper();
@@ -67,8 +66,9 @@ class SectionControllerTest {
 
 
     @Test
+    @Transactional
     void should_add_new_section() throws Exception {
-        courseRepository.save(new Course("java-1", "Java OO", "Java and Object Orientation: Encapsulation, Inheritance and Polymorphism."));
+        courseRepository.save(new Course("java-11", "Java 11", "Java and Object Orientation: Encapsulation, Inheritance and Polymorphism."));
         User user = new User("ana1", "ana@email.com");
         user.setRole(UserRole.INSTRUCTOR);
         userRepository.save(user);
@@ -77,11 +77,11 @@ class SectionControllerTest {
                 "Flutter: Configurando cores dinâmicas",
                 "ana1");
 
-        mockMvc.perform(post("/courses/java-1/sections")
+        mockMvc.perform(post("/courses/java-11/sections")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(newSectionRequest)))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/courses/java-1/sections/flutter-cores-dinamicas"));
+                .andExpect(header().string("Location", "/courses/java-11/sections/flutter-cores-dinamicas"));
     }
 
     @Test
@@ -124,8 +124,9 @@ class SectionControllerTest {
     }
 
     @Test
+    @Transactional
     void bad_request_when_code_in_use() throws Exception {
-        courseRepository.save(new Course("java-2", "Java O1", "Java and Object Orientation: Encapsulation, Inheritance and Polymorphism."));
+        courseRepository.save(new Course("java-22", "Java 22", "Java and Object Orientation: Encapsulation, Inheritance and Polymorphism."));
         User newUser = userRepository.save(new User("alice", "alice@email.com"));
         newUser.setRole(UserRole.INSTRUCTOR);
         userRepository.save(newUser);
@@ -134,13 +135,13 @@ class SectionControllerTest {
                 "Java: Encapsulation",
                 "alice");
         Optional<User> user = userRepository.findByUsername("alice");
-        Optional<Course> course = courseRepository.findByCode("java-2");
+        Optional<Course> course = courseRepository.findByCode("java-22");
         Section section = new Section("java-encapsulation", "Java: Encapsulation");
         section.setAuthor(user.get());
         section.setCourse(course.get());
         sectionRepository.save(section);
 
-        mockMvc.perform(post("/courses/java-2/sections")
+        mockMvc.perform(post("/courses/java-22/sections")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(newSectionRequest)))
                 .andExpect(status().reason("Code java-encapsulation already in use"))
@@ -161,6 +162,7 @@ class SectionControllerTest {
     }
 
     @Test
+    @Transactional
     void bad_request_when_author_is_not_instructor() throws Exception {
         courseRepository.save(new Course("java-3", "Java O2", "Java and Object Orientation: Encapsulation, Inheritance and Polymorphism."));
         User newUser2 = userRepository.save(new User("alex1", "ana@email.com"));
@@ -179,6 +181,7 @@ class SectionControllerTest {
     }
 
     @Test
+    @Transactional
     void should_return_report() throws Exception {
         Course course = courseRepository.save(new Course("java-4", "Java O3", "Java Multithreading"));
         User newUser2 = userRepository.save(new User("bob", "bob@email.com"));

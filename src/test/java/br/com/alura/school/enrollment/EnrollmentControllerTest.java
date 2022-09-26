@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,6 +42,7 @@ class EnrollmentControllerTest {
 
 
     @Test
+    @Transactional
     void should_enroll() throws Exception {
         courseRepository.save(new Course("git-4", "Git O3", "Git basics."));
         User newUser = userRepository.save(new User("hunter", "hunter@email.com"));
@@ -57,6 +59,7 @@ class EnrollmentControllerTest {
     }
 
     @Test
+    @Transactional
     void bad_request_when_user_already_enrolled() throws Exception {
         Course course =courseRepository.save(new Course("git-5", "Git O4", "Git basics."));
         User newUser = userRepository.save(new User("hunter2", "hunter2@email.com"));
@@ -77,6 +80,7 @@ class EnrollmentControllerTest {
     }
 
     @Test
+    @Transactional
     void not_found_when_course_is_not_found() throws Exception {
         User newUser = userRepository.save(new User("hunter3", "hunter3@email.com"));
         newUser.setRole(UserRole.INSTRUCTOR);

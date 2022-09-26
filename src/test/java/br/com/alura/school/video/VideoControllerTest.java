@@ -8,7 +8,6 @@ import br.com.alura.school.user.User;
 import br.com.alura.school.user.UserRepository;
 import br.com.alura.school.user.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Optional;
+import javax.transaction.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -47,6 +46,7 @@ class VideoControllerTest {
 
 
     @Test
+    @Transactional
     void should_add_new_video() throws Exception {
         Course course = courseRepository.save(new Course("git-2", "Git 01", "Git basics."));
         User newUser2 = userRepository.save(new User("john", "john@email.com"));
@@ -68,6 +68,7 @@ class VideoControllerTest {
     }
 
     @Test
+    @Transactional
     void bad_request_when_empty_video() throws Exception {
         NewVideoRequest newVideoRequest = new NewVideoRequest("");
 
@@ -79,6 +80,7 @@ class VideoControllerTest {
     }
 
     @Test
+    @Transactional
     void conflict_when_video_in_lecture() throws Exception {
         Course course = courseRepository.save(new Course("git-3", "Git 02", "Git basics."));
         User newUser2 = userRepository.save(new User("doe", "doe@email.com"));

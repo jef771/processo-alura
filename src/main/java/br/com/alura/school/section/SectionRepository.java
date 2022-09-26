@@ -19,4 +19,7 @@ public interface SectionRepository extends JpaRepository<Section, Long> {
             "left join s.author u " +
             "where s.course.id in(select distinct e.id.courseId from Enrollment e)")
     List<SectionByVideosReport> report();
+
+    @Query("select new br.com.alura.school.section.SectionDTO(s.code, s.title, s.author.username) from Section s where s.course.id =?1")
+    List<SectionDTO> findAllByCourseId(Long courseId);
 }
