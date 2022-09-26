@@ -1,9 +1,9 @@
-package br.com.alura.school.lecture;
+package br.com.alura.school.section;
 
 import br.com.alura.school.course.Course;
 import br.com.alura.school.course.CourseRepository;
-import br.com.alura.school.reports.VideoByLectureReport;
-import br.com.alura.school.reports.VideoByLectureReportResponse;
+import br.com.alura.school.reports.SectionByVideosReport;
+import br.com.alura.school.reports.SectionByVideosReportResponse;
 import br.com.alura.school.user.User;
 import br.com.alura.school.user.UserRepository;
 import br.com.alura.school.user.UserRole;
@@ -23,65 +23,65 @@ import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
-public class LectureController {
+public class SectionController {
 
-    private final LectureRepository lectureRepository;
+    private final SectionRepository sectionRepository;
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
 
 
-    public LectureController(LectureRepository lectureRepository, CourseRepository courseRepository, UserRepository userRepository) {
-        this.lectureRepository = lectureRepository;
+    public SectionController(SectionRepository sectionRepository, CourseRepository courseRepository, UserRepository userRepository) {
+        this.sectionRepository = sectionRepository;
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
     }
 
     @PostMapping("/courses/{code}/sections")
-    ResponseEntity<Void> newLecture(@PathVariable("code") String code,
-                                    @RequestBody @Valid NewLectureRequest newLectureRequest) {
-        if(StringUtils.isBlank(newLectureRequest.getCode()) ||
-                StringUtils.isBlank(newLectureRequest.getTitle()) ||
-                StringUtils.isBlank(newLectureRequest.getAuthorUsername())) {
+    ResponseEntity<Void> newSection(@PathVariable("code") String code,
+                                    @RequestBody @Valid NewSectionRequest newSectionRequest) {
+        if(StringUtils.isBlank(newSectionRequest.getCode()) ||
+                StringUtils.isBlank(newSectionRequest.getTitle()) ||
+                StringUtils.isBlank(newSectionRequest.getAuthorUsername())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, format("Please inform code, tittle, and author username"));
         }
 
-        if(StringUtils.length(newLectureRequest.getTitle()) < 5) {
+        if(StringUtils.length(newSectionRequest.getTitle()) < 5) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, format("Title must have more than 5"));
         }
-        if(lectureRepository.existsLectureByCode(newLectureRequest.getCode())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, format("Code %s already in use", newLectureRequest.getCode()));
+        if(sectionRepository.existsSectionByCode(newSectionRequest.getCode())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, format("Code %s already in use", newSectionRequest.getCode()));
         }
 
         Optional<Course> course = courseRepository.findByCode(code);
-        Optional<User> user = userRepository.findByUsername(newLectureRequest.getAuthorUsername());
+        Optional<User> user = userRepository.findByUsername(newSectionRequest.getAuthorUsername());
         if(course.isEmpty()) {
             throw new ResponseStatusException(NOT_FOUND, format("Course with code %s not found", code));
         } else if(user.isEmpty()) {
             throw new ResponseStatusException(NOT_FOUND, format("User with username %s not found",
-                    newLectureRequest.getAuthorUsername()));
+                    newSectionRequest.getAuthorUsername()));
         }
         User author = user.get();
         if(!UserRole.INSTRUCTOR.equals(author.getRole())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, format("User must be an INSTRUCTOR"));
         }
 
-        Lecture lecture = newLectureRequest.toEntity();
-        lecture.setCourse(course.get());
-        lecture.setAuthor(author);
+        Section section = newSectionRequest.toEntity();
+        section.setCourse(course.get());
+        section.setAuthor(author);
 
-        Lecture newLecture = lectureRepository.save(lecture);
-        URI location = URI.create(format("/courses/%s/sections/%s", code, newLecture.getCode()));
+        Section newSection = sectionRepository.save(section);
+        URI location = URI.create(format("/courses/%s/sections/%s", code, newSection.getCode()));
 
         return ResponseEntity.created(location).build();
     }
 
     @GetMapping("/sectionByVideosReport")
-    ResponseEntity<List<VideoByLectureReportResponse>> report() {
-        List<VideoByLectureReport> report = lectureRepository.report();
-        List<VideoByLectureReportResponse> reportResponse = new ArrayList<>();
+    ResponseEntity<List<SectionByVideosReportResponse>> report() {
+        List<SectionByVideosReport> report = sectionRepository.report();
+        List<SectionByVideosReportResponse> reportResponse = new ArrayList<>();
 
         report.forEach(r -> {
-            reportResponse.add(new VideoByLectureReportResponse(r));
+            reportResponse.add(new SectionByVideosReportResponse(r));
         });
 
         return ResponseEntity.ok(reportResponse);

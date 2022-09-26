@@ -1,8 +1,8 @@
 package br.com.alura.school.video;
 
 import br.com.alura.school.course.CourseRepository;
-import br.com.alura.school.lecture.Lecture;
-import br.com.alura.school.lecture.LectureRepository;
+import br.com.alura.school.section.Section;
+import br.com.alura.school.section.SectionRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +23,12 @@ import static java.lang.String.format;
 public class VideoController {
 
     private final VideoRepository videoRepository;
-    private final LectureRepository lectureRepository;
+    private final SectionRepository sectionRepository;
     private final CourseRepository courseRepository;
 
-    public VideoController(VideoRepository videoRepository, LectureRepository lectureRepository, CourseRepository courseRepository) {
+    public VideoController(VideoRepository videoRepository, SectionRepository sectionRepository, CourseRepository courseRepository) {
         this.videoRepository = videoRepository;
-        this.lectureRepository = lectureRepository;
+        this.sectionRepository = sectionRepository;
         this.courseRepository = courseRepository;
     }
 
@@ -40,12 +40,12 @@ public class VideoController {
         if(StringUtils.isBlank(newVideoRequest.getVideo())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, format("Please inform video"));
         }
-        Optional<Lecture> lecture = lectureRepository.findLectureByCode(sectionCode);
-        if(videoRepository.existsVideoByVideoAndLecture(newVideoRequest.getVideo(), lecture.get())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, format("Video %s already in lecture %s", newVideoRequest.getVideo(), lecture.get().getTitle()));
+        Optional<Section> section = sectionRepository.findSectionByCode(sectionCode);
+        if(videoRepository.existsVideoByVideoAndSection(newVideoRequest.getVideo(), section.get())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, format("Video %s already in section %s", newVideoRequest.getVideo(), section.get().getTitle()));
         }
         Video newVideo = newVideoRequest.toEntity();
-        newVideo.setLecture(lecture.get());
+        newVideo.setSection(section.get());
         videoRepository.save(newVideo);
         URI location = URI.create(format(""));
 

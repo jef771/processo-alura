@@ -2,8 +2,8 @@ package br.com.alura.school.video;
 
 import br.com.alura.school.course.Course;
 import br.com.alura.school.course.CourseRepository;
-import br.com.alura.school.lecture.Lecture;
-import br.com.alura.school.lecture.LectureRepository;
+import br.com.alura.school.section.Section;
+import br.com.alura.school.section.SectionRepository;
 import br.com.alura.school.user.User;
 import br.com.alura.school.user.UserRepository;
 import br.com.alura.school.user.UserRole;
@@ -35,7 +35,7 @@ class VideoControllerTest {
     private CourseRepository courseRepository;
 
     @Autowired
-    private LectureRepository lectureRepository;
+    private SectionRepository sectionRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -43,7 +43,7 @@ class VideoControllerTest {
     @Autowired
     private VideoRepository videoRepository;
 
-    private Lecture lecture;
+    private Section section;
 
     @BeforeEach
     void init() {
@@ -51,10 +51,10 @@ class VideoControllerTest {
         User newUser = new User("ana", "ana@email.com");
         newUser.setRole(UserRole.INSTRUCTOR);
         userRepository.save(newUser);
-        Lecture newLecture = new Lecture("flutter-cores-dinamicas", "Flutter: Configurando cores dinâmicas");
-        newLecture.setCourse(newCourse);
-        newLecture.setAuthor(newUser);
-        lecture = lectureRepository.save(newLecture);
+        Section newSection = new Section("flutter-cores-dinamicas", "Flutter: Configurando cores dinâmicas");
+        newSection.setCourse(newCourse);
+        newSection.setAuthor(newUser);
+        section = sectionRepository.save(newSection);
     }
 
     @Test
@@ -82,9 +82,9 @@ class VideoControllerTest {
     @Test
     void conflict_when_video_in_lecture() throws Exception {
         NewVideoRequest newVideoRequest = new NewVideoRequest("https://www.youtube.com/watch?v=gI4-vj0WpKM");
-        Optional<Lecture> lecture1 = lectureRepository.findLectureByCode("flutter-cores-dinamicas");
+        Optional<Section> section1 = sectionRepository.findSectionByCode("flutter-cores-dinamicas");
         Video video = new Video("https://www.youtube.com/watch?v=gI4-vj0WpKM");
-        video.setLecture(lecture);
+        video.setSection(section);
         videoRepository.save(video);
 
         mockMvc.perform(post("/courses/java-1/sections/flutter-cores-dinamicas")

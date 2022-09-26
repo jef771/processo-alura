@@ -1,12 +1,10 @@
-package br.com.alura.school.lecture;
+package br.com.alura.school.section;
 
-import br.com.alura.school.support.validation.Unique;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
-public class NewLectureRequest {
+public class NewSectionRequest {
 
     @JsonProperty
     private final String code;
@@ -19,14 +17,14 @@ public class NewLectureRequest {
     private final String authorUsername;
 
 
-    public NewLectureRequest(String code, String title, String authorUsername) {
+    public NewSectionRequest(String code, String title, String authorUsername) {
         this.code = code;
         this.title = title;
         this.authorUsername = authorUsername;
     }
 
-    public Lecture toEntity() {
-        return new Lecture(code, title);
+    public Section toEntity() {
+        return new Section(code, title);
     }
 
     public String getCode() {

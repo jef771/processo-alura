@@ -2,11 +2,9 @@ package br.com.alura.school.enrollment;
 
 import br.com.alura.school.course.Course;
 import br.com.alura.school.course.CourseRepository;
-import br.com.alura.school.lecture.LectureRepository;
 import br.com.alura.school.user.User;
 import br.com.alura.school.user.UserRepository;
 import br.com.alura.school.user.UserRole;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

@@ -2,7 +2,7 @@ package br.com.alura.school.reports;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class VideoByLectureReportResponse {
+public class SectionByVideosReportResponse {
 
     @JsonProperty
     private final String courseName;
@@ -17,7 +17,7 @@ public class VideoByLectureReportResponse {
     private final Long totalVideos;
 
 
-    public VideoByLectureReportResponse(VideoByLectureReport report) {
+    public SectionByVideosReportResponse(SectionByVideosReport report) {
         this.courseName = report.getCourseName();
         this.sectionTitle = report.getSectionTitle();
         this.authorName = report.getAuthorName();

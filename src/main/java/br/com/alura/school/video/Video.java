@@ -1,6 +1,6 @@
 package br.com.alura.school.video;
 
-import br.com.alura.school.lecture.Lecture;
+import br.com.alura.school.section.Section;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -10,7 +10,7 @@ public class Video {
 
     public static final String ID = "id";
     public static final String COLUMN_VIDEO = "video";
-    public static final String COLUMN_LECTURE_ID = "lecture_id";
+    public static final String COLUMN_LECTURE_ID = "section_id";
 
 
     @Id
@@ -27,7 +27,9 @@ public class Video {
             referencedColumnName = "id",
             nullable = false
     )
-    private Lecture lecture;
+    private Section section;
+
+    public Video() {}
 
     public Video(String video) {
         this.video = video;
@@ -41,11 +43,11 @@ public class Video {
         this.video = video;
     }
 
-    public Lecture getLecture() {
-        return lecture;
+    public Section getSection() {
+        return section;
     }
 
-    public void setLecture(Lecture lecture) {
-        this.lecture = lecture;
+    public void setSection(Section section) {
+        this.section = section;
     }
 }

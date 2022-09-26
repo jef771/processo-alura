@@ -1,10 +1,6 @@
 package br.com.alura.school.video;
 
-import br.com.alura.school.lecture.Lecture;
-import br.com.alura.school.support.validation.Unique;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.validation.constraints.NotBlank;
 
 public class NewVideoRequest {
 
