@@ -8,11 +8,8 @@ import javax.validation.constraints.NotBlank;
 
 public class NewVideoRequest {
 
-    @Unique(entity = Video.class, field = "video")
-    @NotBlank
     @JsonProperty("video")
     private String video;
-
 
     public NewVideoRequest() {}
     public NewVideoRequest(String video) {

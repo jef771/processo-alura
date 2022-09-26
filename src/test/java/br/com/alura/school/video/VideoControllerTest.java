@@ -16,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,6 +40,9 @@ class VideoControllerTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private VideoRepository videoRepository;
+
     private Lecture lecture;
 
     @BeforeEach
@@ -55,12 +60,37 @@ class VideoControllerTest {
     @Test
     void should_add_new_video() throws Exception {
         NewVideoRequest newVideoRequest = new NewVideoRequest("https://www.youtube.com/watch?v=gI4-vj0WpKM");
-        String s = jsonMapper.writeValueAsString(newVideoRequest);
-        System.out.println(s);
+
         mockMvc.perform(post("/courses/java-1/sections/flutter-cores-dinamicas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(newVideoRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", ""));
+    }
+
+    @Test
+    void bad_request_when_empty_video() throws Exception {
+        NewVideoRequest newVideoRequest = new NewVideoRequest("");
+
+        mockMvc.perform(post("/courses/java-1/sections/flutter-cores-dinamicas")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonMapper.writeValueAsString(newVideoRequest)))
+                .andExpect(status().reason("Please inform video"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void conflict_when_video_in_lecture() throws Exception {
+        NewVideoRequest newVideoRequest = new NewVideoRequest("https://www.youtube.com/watch?v=gI4-vj0WpKM");
+        Optional<Lecture> lecture1 = lectureRepository.findLectureByCode("flutter-cores-dinamicas");
+        Video video = new Video("https://www.youtube.com/watch?v=gI4-vj0WpKM");
+        video.setLecture(lecture);
+        videoRepository.save(video);
+
+        mockMvc.perform(post("/courses/java-1/sections/flutter-cores-dinamicas")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonMapper.writeValueAsString(newVideoRequest)))
+                .andExpect(status().reason("Video https://www.youtube.com/watch?v=gI4-vj0WpKM already in lecture Flutter: Configurando cores dinâmicas"))
+                .andExpect(status().isConflict());
     }
 }
