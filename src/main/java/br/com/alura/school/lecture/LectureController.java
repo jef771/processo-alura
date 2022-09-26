@@ -3,6 +3,7 @@ package br.com.alura.school.lecture;
 import br.com.alura.school.course.Course;
 import br.com.alura.school.course.CourseRepository;
 import br.com.alura.school.reports.VideoByLectureReport;
+import br.com.alura.school.reports.VideoByLectureReportResponse;
 import br.com.alura.school.user.User;
 import br.com.alura.school.user.UserRepository;
 import br.com.alura.school.user.UserRole;
@@ -14,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,8 +76,14 @@ public class LectureController {
     }
 
     @GetMapping("/sectionByVideosReport")
-    ResponseEntity<VideoByLectureReport> report() {
+    ResponseEntity<List<VideoByLectureReportResponse>> report() {
         List<VideoByLectureReport> report = lectureRepository.report();
-        return null;
+        List<VideoByLectureReportResponse> reportResponse = new ArrayList<>();
+
+        report.forEach(r -> {
+            reportResponse.add(new VideoByLectureReportResponse(r));
+        });
+
+        return ResponseEntity.ok(reportResponse);
     }
 }

@@ -19,4 +19,20 @@ public class VideoByLectureReport {
         this.sectionTitle = sectionTitle;
         this.authorName = authorName;
     }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public String getSectionTitle() {
+        return sectionTitle;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public Long getTotalVideos() {
+        return totalVideos;
+    }
 }
